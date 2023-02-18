@@ -220,16 +220,23 @@ else
 	deps += dependency('gtk+-3.0')
 endif
 
-# not sure which version fixed Message.response_headers.get_content_range(), 2.60+ should work
-soup260 = dependency('libsoup-2.4', version: '>=2.60', required: false)
-if soup260.found()
+soup30 = dependency('libsoup-3.0', required: false)
+if soup30.found()
 	add_global_arguments('-D', 'SOUP_2_60', language: 'vala')
-	deps += soup260
+	deps += soup30
+	webkit2gtk = dependency('webkit2gtk-4.1', required: false)
 else
-	deps += dependency('libsoup-2.4')
+	# not sure which version fixed Message.response_headers.get_content_range(), 2.60+ should work
+	soup260 = dependency('libsoup-2.4', version: '>=2.60', required: false)
+	if soup260.found()
+		add_global_arguments('-D', 'SOUP_2_60', language: 'vala')
+		deps += soup260
+	else
+		deps += dependency('libsoup-2.4')
+	endif
+	webkit2gtk = dependency('webkit2gtk-4.0', required: false)
 endif
 
-webkit2gtk = dependency('webkit2gtk-4.0', required: false)
 if webkit2gtk.found()
 	add_global_arguments('-D', 'WEBKIT2GTK', language: 'vala')
 	deps += webkit2gtk
